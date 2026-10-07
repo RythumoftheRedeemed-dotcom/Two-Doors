@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Upper Room — Rhythm of the Redeemed</title>
+<style>
+
+/* Two Doors — Rhythm of the Redeemed. Warm, deep, reverent. Candlelight & furnace, not cafe. */
+:root{
+  --bg:#0c0805;
+  --bg2:#17100a;
+  --panel:rgba(30,21,11,.88);
+  --gold:#d9a94f;
+  --gold-soft:#f0cd7e;
+  --amber:#c07f2c;
+  --ember:#e2581f;
+  --ivory:#f7eeda;
+  --muted:#c8ab7e;
+  --line:rgba(217,169,79,.32);
+  --flame1:#ffdf9e;
+  --flame2:#f5a742;
+  --flame3:#c2571d;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{color-scheme:dark}
+body{
+  background:
+    radial-gradient(120% 42% at 50% -6%, rgba(224,120,32,.20), transparent 62%),
+    radial-gradient(90% 34% at 50% 108%, rgba(150,70,18,.16), transparent 60%),
+    radial-gradient(140% 90% at 50% 40%, #1c130a 0%, var(--bg) 78%);
+  background-color:var(--bg);
+  background-attachment:fixed;
+  color:var(--ivory);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.65;
+  min-height:100vh;
+}
+.serif{font-family:Georgia,"Times New Roman",serif}
+a{color:var(--gold-soft)}
+.wrap{max-width:960px;margin:0 auto;padding:18px 16px 64px}
+
+/* ---------- header: brand + nav, properly spaced ---------- */
+header.site{
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  text-align:center;padding:30px 12px 8px;
+}
+.brand{
+  font-family:Georgia,serif;font-size:1.45rem;letter-spacing:.10em;
+  color:var(--ivory);margin:0;line-height:1.35;
+  text-shadow:0 0 26px rgba(217,169,79,.35);
+}
+.brand small{
+  display:block;font-size:.72rem;letter-spacing:.5em;color:var(--gold);
+  margin-top:8px;text-indent:.5em;
+}
+header.site .mission{
+  font-family:Georgia,serif;font-style:italic;color:var(--gold-soft);
+  font-size:1.05rem;margin:0;max-width:32em;
+}
+nav.doors{
+  display:flex;gap:10px;justify-content:center;align-items:center;
+  flex-wrap:wrap;margin:4px 0 8px;padding:0 4px;
+}
+nav.doors a{
+  text-decoration:none;color:var(--ivory);border:1px solid var(--line);
+  padding:10px 20px;border-radius:999px;background:rgba(217,169,79,.08);
+  font-size:.95rem;white-space:nowrap;
+  box-shadow:inset 0 1px 0 rgba(255,223,158,.12);
+}
+nav.doors a.active{
+  background:linear-gradient(180deg,rgba(217,169,79,.32),rgba(185,122,42,.22));
+  border-color:var(--gold);color:var(--gold-soft);
+}
+
+/* ---------- cards & panels ---------- */
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);border-radius:16px;
+  padding:22px 20px;margin:20px 0;
+  box-shadow:0 10px 34px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,223,158,.10);
+  backdrop-filter:blur(4px);
+}
+.card h2{font-family:Georgia,serif;color:var(--gold-soft);margin:0 0 10px;font-weight:600;font-size:1.45rem;
+  text-shadow:0 0 18px rgba(217,169,79,.25)}
+.card h3{font-family:Georgia,serif;color:var(--gold-soft);margin:18px 0 8px}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-block;background:linear-gradient(180deg,var(--gold-soft),var(--amber));
+  color:#2a1c07;border:none;border-radius:12px;padding:13px 24px;font-size:1rem;
+  font-weight:700;cursor:pointer;text-decoration:none;
+  box-shadow:0 4px 18px rgba(217,169,79,.30), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.5;cursor:wait}
+.btn.ghost{background:rgba(217,169,79,.06);color:var(--gold-soft);border:1px solid var(--line);box-shadow:none}
+
+/* ---------- forms ---------- */
+input[type=text],input[type=email],input[type=password],input[type=url],textarea,select{
+  width:100%;background:#0a0704;border:1px solid var(--line);border-radius:12px;
+  color:var(--ivory);padding:13px 15px;font-size:1rem;margin:6px 0 12px;
+}
+input:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(217,169,79,.18)}
+textarea{min-height:110px;resize:vertical}
+label{color:var(--muted);font-size:.9rem;display:block;margin-top:6px}
+.hint{color:var(--muted);font-size:.9rem}
+::placeholder{color:#7d6647}
+
+/* ---------- chat ---------- */
+.chatlog{
+  display:flex;flex-direction:column;gap:10px;max-height:46vh;overflow-y:auto;
+  padding:8px 4px;margin-bottom:12px;
+}
+.msg{max-width:88%;padding:11px 15px;border-radius:14px;font-size:.97rem;line-height:1.6}
+.msg.guide{background:rgba(240,205,126,.10);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
+.msg.user{background:rgba(194,88,31,.24);border:1px solid rgba(226,88,31,.45);align-self:flex-end;border-bottom-right-radius:4px}
+.msg .who{font-size:.72rem;color:var(--gold);letter-spacing:.12em;margin-bottom:4px}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
+.chip{
+  border:1px solid var(--line);background:linear-gradient(180deg,rgba(217,169,79,.16),rgba(185,122,42,.08));
+  color:var(--gold-soft);border-radius:999px;padding:9px 17px;font-size:.88rem;cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,.3);
+}
+.row{display:flex;gap:10px;align-items:center}
+.row input{margin:0;flex:1}
+.row .btn{flex-shrink:0}
+
+/* ---------- posts / lists / tabs ---------- */
+.post{border-bottom:1px solid rgba(217,169,79,.16);padding:13px 2px}
+.post .meta{font-size:.78rem;color:var(--muted)}
+.post .body{margin:5px 0 2px;white-space:pre-wrap}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.tab{border:1px solid var(--line);background:rgba(217,169,79,.05);color:var(--ivory);
+  border-radius:999px;padding:10px 18px;cursor:pointer;font-size:.93rem}
+.tab.active{background:linear-gradient(180deg,rgba(217,169,79,.30),rgba(185,122,42,.18));
+  border-color:var(--gold);color:var(--gold-soft)}
+.badge{display:inline-block;min-width:20px;text-align:center;background:var(--ember);color:#fff;
+  border-radius:999px;font-size:.72rem;padding:2px 7px;margin-left:6px;font-weight:700}
+.list-item{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:9px 0;
+  background:rgba(217,169,79,.06);cursor:pointer}
+.list-item:hover{background:rgba(217,169,79,.14)}
+.list-item .meta{font-size:.78rem;color:var(--muted)}
+.notice{border:1px dashed var(--line);border-radius:12px;padding:15px;color:var(--muted);
+  font-size:.92rem;margin:14px 0;background:rgba(217,169,79,.04)}
+
+/* ---------- toggles ---------- */
+.toggle{display:flex;gap:10px;margin:8px 0 14px;flex-wrap:wrap}
+.toggle button{flex:1;min-width:140px;border:1px solid var(--line);background:rgba(0,0,0,.25);
+  color:var(--muted);border-radius:12px;padding:12px;cursor:pointer;font-size:.92rem}
+.toggle button.on{background:rgba(217,169,79,.20);color:var(--gold-soft);border-color:var(--gold)}
+.hidden{display:none!important}
+
+/* ---------- flame & door art ---------- */
+.flame{width:68px;height:90px;margin:0 auto;display:block;animation:flick 1.7s ease-in-out infinite;
+  transform-origin:50% 90%;filter:drop-shadow(0 0 22px rgba(245,167,66,.55))}
+@keyframes flick{0%,100%{transform:scale(1) rotate(-1.5deg)}50%{transform:scale(1.06,1.1) rotate(1.5deg)}}
+
+/* ---------- door grid (landing) ---------- */
+.door-grid{display:grid;grid-template-columns:1fr;gap:18px;margin:28px 0}
+@media(min-width:640px){.door-grid{grid-template-columns:1fr 1fr}}
+.door{
+  display:block;text-decoration:none;color:var(--ivory);border:1px solid var(--line);
+  border-radius:18px;padding:32px 24px;background:var(--panel);text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,223,158,.10);
+}
+.door:hover{border-color:var(--gold);background:rgba(217,169,79,.10)}
+.door h2{font-family:Georgia,serif;color:var(--gold-soft);margin:12px 0 8px;font-size:1.6rem;
+  text-shadow:0 0 16px rgba(217,169,79,.25)}
+.door p{color:var(--muted);font-size:.95rem;margin:0}
+
+/* ---------- footer ---------- */
+footer.site{text-align:center;color:var(--muted);font-size:.84rem;padding:28px 16px 44px}
+footer.site a{color:var(--gold)}
+
+/* ---------- user bar ---------- */
+#userbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+#userbar .who{color:var(--gold-soft);font-weight:600}
+#userbar .row{gap:8px}
+
+</style>
+<style>
+  .room-hero{text-align:center;padding:10px 0 4px}
+  .room-hero h1{font-family:Georgia,serif;color:var(--gold-soft);font-size:2rem;margin:10px 0 4px}
+  .room-hero p{color:var(--muted);font-style:italic;font-family:Georgia,serif}
+  .lamp{width:70px;height:70px;margin:0 auto;display:block}
+  .lamp .glow{animation:glowp 3s ease-in-out infinite}
+  @keyframes glowp{0%,100%{opacity:.75}50%{opacity:1}}
+  #userbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  #userbar .who{color:var(--gold-soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <p class="brand">RHYTHM OF THE REDEEMED<small>TWO DOORS</small></p>
+    <nav class="doors">
+      <a href="index.html">The Two Doors</a>
+      <a href="altar.html">The Altar</a>
+      <a href="upper-room.html" class="active">The Upper Room</a>
+    </nav>
+  </header>
+
+  <div class="room-hero">
+    <svg class="lamp" viewBox="0 0 70 70" aria-hidden="true">
+      <circle class="glow" cx="35" cy="30" r="24" fill="rgba(245,167,66,.18)"/>
+      <path d="M35 12 C42 24 50 28 50 40 A15 15 0 0 1 20 40 C20 28 28 24 35 12 Z" fill="#f5a742"/>
+      <path d="M35 24 C38 30 42 33 42 40 A7 7 0 0 1 28 40 C28 33 32 30 35 24 Z" fill="#ffdf9e"/>
+      <rect x="28" y="52" width="14" height="4" rx="2" fill="#8a5a24"/>
+      <rect x="24" y="58" width="22" height="3" rx="1.5" fill="#6b451c"/>
+    </svg>
+    <h1>The Upper Room</h1>
+    <p>"They went up into an upper room… these all continued with one accord in prayer." — Acts 1:13–14</p>
+  </div>
+
+  <div id="dbnotice" class="notice hidden">The Upper Room is still being connected — the database tables are not live yet. Please check back soon.</div>
+
+  <!-- signed out -->
+  <div class="card" id="authcard">
+    <h2>Enter the Room</h2>
+    <p class="hint">Sign in with your Rhythm of the Redeemed account, or create one — pick a display name (keep it clean) and you are family.</p>
+    <label for="email">Email</label>
+    <input type="email" id="email" autocomplete="email" placeholder="you@example.com">
+    <label for="password">Password</label>
+    <input type="password" id="password" autocomplete="current-password" placeholder="••••••••">
+    <div class="row" style="margin-top:6px">
+      <button class="btn" id="signin">Sign in</button>
+      <button class="btn ghost" id="signup">Create account</button>
+    </div>
+    <p class="hint" id="authmsg"></p>
+  </div>
+
+  <!-- display name setup -->
+  <div class="card hidden" id="namecard">
+    <h2>Choose Your Name</h2>
+    <p class="hint">How should the family know you? No profanity, please.</p>
+    <div class="row">
+      <input type="text" id="dname" maxlength="40" placeholder="Display name">
+      <button class="btn" id="sname">Enter</button>
+    </div>
+    <p class="hint" id="namemsg"></p>
+  </div>
+
+  <!-- signed in -->
+  <div id="room" class="hidden">
+    <div class="card">
+      <div id="userbar">
+        <div>Welcome, <span class="who serif" id="who"></span> <span id="totalbadge"></span></div>
+        <div>
+          <button class="btn ghost" id="myprofile">My profile</button>
+          <button class="btn ghost" id="signout">Sign out</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-t="board">The Board</button>
+      <button class="tab" data-t="groups">Group Chats</button>
+      <button class="tab" data-t="members">Members</button>
+    </div>
+
+    <div class="card" id="tab-board">
+      <h2>The Board</h2>
+      <p class="hint">Post what is going on — a need, a praise, a word. The family is listening.</p>
+      <div class="row">
+        <input type="text" id="postin" maxlength="500" placeholder="Share with the room…">
+        <button class="btn" id="postsend">Post</button>
+      </div>
+      <div id="posts"></div>
+    </div>
+
+    <div class="card hidden" id="tab-groups">
+      <h2>Group Chats</h2>
+      <div id="grouplist"></div>
+      <h3>Start a new group</h3>
+      <div class="row">
+        <input type="text" id="gname" maxlength="60" placeholder="Group name, e.g. Morning Prayer">
+        <button class="btn" id="gcreate">Create</button>
+      </div>
+      <h3>Browse groups</h3>
+      <div id="browse"></div>
+    </div>
+
+    <div class="card hidden" id="groupview" >
+      <button class="btn ghost" id="gback">← All groups</button>
+      <h2 id="gvname" class="serif"></h2>
+      <div class="chatlog" id="gmsgs"></div>
+      <div class="row">
+        <input type="text" id="gmsgi" maxlength="1000" placeholder="Write to the group…">
+        <button class="btn" id="gmsgsend">Send</button>
+      </div>
+      <h3>Call links</h3>
+      <div id="calllinks"></div>
+      <div class="row">
+        <input type="url" id="curl" placeholder="Paste a call link (e.g. meet/zoom)…">
+        <button class="btn ghost" id="cadd">Add link</button>
+      </div>
+      <h3>Present members</h3>
+      <div id="gmems"></div>
+    </div>
+
+    <div class="card hidden" id="tab-members">
+      <h2>Members Present</h2>
+      <p class="hint">Those who have chosen to be visible to the family.</p>
+      <div id="members"></div>
+    </div>
+
+    <div class="card hidden" id="profilecard">
+      <h2>My Profile</h2>
+      <label for="pbio">About you</label>
+      <textarea id="pbio" maxlength="500" placeholder="A few words…"></textarea>
+      <label>Let others view my profile</label>
+      <div class="toggle" id="visptoggle">
+        <button type="button" data-v="1" class="on">Visible</button>
+        <button type="button" data-v="0">Hidden</button>
+      </div>
+      <button class="btn" id="psave">Save profile</button>
+    </div>
+  </div>
+
+  <footer class="site">
+    <p>Rhythm of the Redeemed · From drowning to dancing — walk it with us, one song at a time.</p>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* Two Doors — shared Supabase client + helpers */
+const SUPABASE_URL = "https://gegglxiexkwmppnqxvqr.supabase.co";
+const SUPABASE_KEY = "sb_publishable_rWDRMo8sptkcIuTqc97YZQ_vdRMr_NM";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function esc(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
+/* modest client-side profanity filter for display names */
+const BAD_WORDS = ["fuck","shit","bitch","cunt","whore","slut","dick","pussy","asshole","bastard","nigger","faggot","retard","damn"];
+function cleanName(name){
+  const n = String(name||"").trim();
+  if(n.length < 2 || n.length > 40) return "Name must be 2–40 characters.";
+  const low = " " + n.toLowerCase().replace(/[^a-z]/g," ") + " ";
+  for(const w of BAD_WORDS){ if(low.includes(" " + w + " ")) return "Please choose a name without profanity."; }
+  return null;
+}
+
+function timeAgo(iso){
+  const s = Math.floor((Date.now() - new Date(iso).getTime())/1000);
+  if(s < 60) return "just now";
+  if(s < 3600) return Math.floor(s/60) + "m ago";
+  if(s < 86400) return Math.floor(s/3600) + "h ago";
+  return Math.floor(s/86400) + "d ago";
+}
+
+/* Returns true if the database tables are reachable. */
+async function dbReady(){
+  try{
+    const { error } = await supabase.from("guide_faq").select("id").limit(1);
+    return !error;
+  }catch(e){ return false; }
+}
+
+</script>
+<script>
+let user = null, profile = null;
+let openGroup = null, groupSub = null, boardSub = null;
+let unread = {}, nameMap = {}, profileVisible = true;
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tab").forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    ["board","groups","members"].forEach(k =>
+      document.getElementById("tab-" + k).classList.toggle("hidden", k !== t.dataset.t));
+    document.getElementById("groupview").classList.add("hidden");
+    if(t.dataset.t === "members") loadMembers();
+    if(t.dataset.t === "groups") loadGroups();
+  };
+});
+
+/* ---------- auth ---------- */
+async function authMsg(m){ document.getElementById("authmsg").textContent = m; }
+document.getElementById("signup").onclick = async () => {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  if(!email || password.length < 6){ authMsg("Enter an email and a password of 6+ characters."); return; }
+  const { error } = await supabase.auth.signUp({ email, password });
+  authMsg(error ? error.message : "Account created — check your email to confirm, then sign in.");
+};
+document.getElementById("signin").onclick = async () => {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  authMsg(error ? error.message : "");
+};
+document.getElementById("signout").onclick = () => supabase.auth.signOut();
+
+supabase.auth.onAuthStateChange(async (ev, session) => {
+  user = session ? session.user : null;
+  document.getElementById("authcard").classList.toggle("hidden", !!user);
+  document.getElementById("room").classList.toggle("hidden", !user);
+  if(user) await enterRoom();
+  else { profile = null; teardownSubs(); }
+});
+
+async function enterRoom(){
+  const { data } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
+  profile = data || null;
+  if(!profile){
+    document.getElementById("namecard").classList.remove("hidden");
+    return;
+  }
+  document.getElementById("namecard").classList.add("hidden");
+  document.getElementById("who").textContent = profile.display_name;
+  loadBoard(); loadGroups();
+}
+
+document.getElementById("sname").onclick = async () => {
+  const name = document.getElementById("dname").value.trim();
+  const bad = cleanName(name);
+  const nm = document.getElementById("namemsg");
+  if(bad){ nm.textContent = bad; return; }
+  const { error } = await supabase.from("profiles").insert({ id: user.id, display_name: name });
+  if(error){ nm.textContent = error.message; return; }
+  nm.textContent = "";
+  await enterRoom();
+};
+
+/* ---------- profile ---------- */
+let pvis = true;
+document.querySelectorAll("#visptoggle button").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll("#visptoggle button").forEach(x => x.classList.remove("on"));
+    b.classList.add("on"); pvis = b.dataset.v === "1";
+  };
+});
+document.getElementById("myprofile").onclick = () => {
+  const c = document.getElementById("profilecard");
+  c.classList.toggle("hidden");
+  if(profile){ document.getElementById("pbio").value = profile.bio || ""; }
+};
+document.getElementById("psave").onclick = async () => {
+  const bio = document.getElementById("pbio").value.trim().slice(0, 500);
+  const { error } = await supabase.from("profiles").update({ bio, profile_visible: pvis }).eq("id", user.id);
+  if(!error){ profile.bio = bio; profile.profile_visible = pvis; }
+};
+
+/* ---------- board ---------- */
+function teardownSubs(){
+  if(boardSub){ supabase.removeChannel(boardSub); boardSub = null; }
+  if(groupSub){ supabase.removeChannel(groupSub); groupSub = null; }
+}
+async function loadBoard(){
+  const { data } = await supabase.from("board_posts").select("id,body,created_at,user_id").order("created_at", { ascending: false }).limit(50);
+  await fillNames((data || []).map(p => p.user_id));
+  const box = document.getElementById("posts");
+  box.innerHTML = "";
+  (data || []).forEach(p => box.appendChild(postEl(p)));
+  if(boardSub) supabase.removeChannel(boardSub);
+  boardSub = supabase.channel("board")
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "board_posts" }, async payload => {
+      await fillNames([payload.new.user_id]);
+      box.prepend(postEl(payload.new));
+    }).subscribe();
+}
+function postEl(p){
+  const d = document.createElement("div");
+  d.className = "post";
+  d.innerHTML = '<div class="meta">' + esc(nameMap[p.user_id] || "Member") + " · " + timeAgo(p.created_at) + "</div>" +
+                '<div class="body">' + esc(p.body) + "</div>";
+  return d;
+}
+document.getElementById("postsend").onclick = async () => {
+  const inp = document.getElementById("postin");
+  const body = inp.value.trim();
+  if(!body) return;
+  const { error } = await supabase.from("board_posts").insert({ user_id: user.id, body: body.slice(0, 500) });
+  if(!error) inp.value = "";
+};
+
+/* ---------- names ---------- */
+async function fillNames(ids){
+  const missing = [...new Set(ids)].filter(id => id && !nameMap[id]);
+  if(!missing.length) return;
+  const { data } = await supabase.from("profiles").select("id,display_name").in("id", missing);
+  (data || []).forEach(p => { nameMap[p.id] = p.display_name; });
+}
+
+/* ---------- groups ---------- */
+async function loadGroups(){
+  const { data: mem } = await supabase.from("group_members").select("group_id").eq("user_id", user.id);
+  const ids = (mem || []).map(m => m.group_id);
+  let mine = [];
+  if(ids.length){
+    const { data } = await supabase.from("group_chats").select("id,name,created_at").in("id", ids).order("created_at");
+    mine = data || [];
+  }
+  const box = document.getElementById("grouplist");
+  box.innerHTML = "<h3>My groups</h3>";
+  if(!mine.length) box.innerHTML += '<p class="hint">You have not joined a group yet.</p>';
+  mine.forEach(g => {
+    const d = document.createElement("div");
+    d.className = "list-item";
+    d.innerHTML = esc(g.name) + ' <span class="badge" id="ub-' + g.id + '" style="display:none">0</span>';
+    d.onclick = () => openGroupView(g);
+    box.appendChild(d);
+  });
+  /* browse all */
+  const { data: all } = await supabase.from("group_chats").select("id,name").order("created_at").limit(50);
+  const b = document.getElementById("browse");
+  b.innerHTML = "";
+  (all || []).filter(g => !ids.includes(g.id)).forEach(g => {
+    const d = document.createElement("div");
+    d.className = "list-item";
+    d.innerHTML = esc(g.name) + ' <span class="meta">— tap to join</span>';
+    d.onclick = async () => {
+      await supabase.from("group_members").insert({ group_id: g.id, user_id: user.id });
+      loadGroups();
+    };
+    b.appendChild(d);
+  });
+}
+document.getElementById("gcreate").onclick = async () => {
+  const name = document.getElementById("gname").value.trim().slice(0, 60);
+  if(!name) return;
+  const { data, error } = await supabase.from("group_chats").insert({ name, created_by: user.id }).select("id,name").single();
+  if(error) return;
+  await supabase.from("group_members").insert({ group_id: data.id, user_id: user.id });
+  document.getElementById("gname").value = "";
+  loadGroups();
+};
+
+async function openGroupView(g){
+  openGroup = g;
+  unread[g.id] = 0; paintBadges();
+  document.getElementById("tab-groups").classList.add("hidden");
+  document.getElementById("groupview").classList.remove("hidden");
+  document.getElementById("gvname").textContent = g.name;
+  const { data } = await supabase.from("messages").select("id,body,created_at,user_id").eq("group_id", g.id).order("created_at").limit(200);
+  await fillNames((data || []).map(m => m.user_id));
+  const box = document.getElementById("gmsgs");
+  box.innerHTML = "";
+  (data || []).forEach(m => box.appendChild(msgEl(m)));
+  box.scrollTop = box.scrollHeight;
+  if(groupSub) supabase.removeChannel(groupSub);
+  groupSub = supabase.channel("grp-" + g.id)
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: "group_id=eq." + g.id },
+      async payload => {
+        if(openGroup && openGroup.id === g.id){
+          await fillNames([payload.new.user_id]);
+          box.appendChild(msgEl(payload.new));
+          box.scrollTop = box.scrollHeight;
+        } else {
+          unread[g.id] = (unread[g.id] || 0) + 1;
+          paintBadges();
+        }
+      }).subscribe();
+  loadCallLinks(g.id); loadGroupMembers(g.id);
+}
+function msgEl(m){
+  const d = document.createElement("div");
+  d.className = "msg " + (m.user_id === user.id ? "user" : "guide");
+  d.innerHTML = '<div class="who">' + esc(nameMap[m.user_id] || "Member") + "</div>" + esc(m.body);
+  return d;
+}
+document.getElementById("gback").onclick = () => {
+  openGroup = null;
+  document.getElementById("groupview").classList.add("hidden");
+  document.getElementById("tab-groups").classList.remove("hidden");
+  loadGroups();
+};
+document.getElementById("gmsgsend").onclick = sendGroupMsg;
+document.getElementById("gmsgi").addEventListener("keydown", e => { if(e.key === "Enter") sendGroupMsg(); });
+async function sendGroupMsg(){
+  const inp = document.getElementById("gmsgi");
+  const body = inp.value.trim();
+  if(!body || !openGroup) return;
+  const { error } = await supabase.from("messages").insert({ group_id: openGroup.id, user_id: user.id, body: body.slice(0, 1000) });
+  if(!error) inp.value = "";
+}
+function paintBadges(){
+  let total = 0;
+  for(const id in unread){
+    total += unread[id];
+    const el = document.getElementById("ub-" + id);
+    if(el){ el.style.display = unread[id] ? "" : "none"; el.textContent = unread[id]; }
+  }
+  document.getElementById("totalbadge").innerHTML = total ? '<span class="badge">' + total + " new</span>" : "";
+}
+async function loadGroupMembers(gid){
+  const { data } = await supabase.from("group_members").select("user_id").eq("group_id", gid);
+  await fillNames((data || []).map(m => m.user_id));
+  const box = document.getElementById("gmems");
+  box.innerHTML = (data || []).map(m => '<span class="chip">' + esc(nameMap[m.user_id] || "Member") + "</span>").join(" ");
+}
+async function loadCallLinks(gid){
+  const { data } = await supabase.from("call_links").select("id,url,created_at").eq("group_id", gid).eq("active", true).order("created_at", { ascending: false });
+  const box = document.getElementById("calllinks");
+  box.innerHTML = "";
+  if(!(data || []).length) box.innerHTML = '<p class="hint">No call links yet.</p>';
+  (data || []).forEach(c => {
+    const d = document.createElement("div");
+    d.className = "post";
+    d.innerHTML = '<a href="' + esc(c.url) + '" target="_blank" rel="noopener">Join the call</a> <span class="meta">· ' + timeAgo(c.created_at) + "</span>";
+    box.appendChild(d);
+  });
+}
+document.getElementById("cadd").onclick = async () => {
+  const url = document.getElementById("curl").value.trim();
+  if(!url || !openGroup) return;
+  const { error } = await supabase.from("call_links").insert({ group_id: openGroup.id, url, created_by: user.id });
+  if(!error){ document.getElementById("curl").value = ""; loadCallLinks(openGroup.id); }
+};
+
+/* ---------- members ---------- */
+async function loadMembers(){
+  const { data } = await supabase.from("profiles").select("display_name,bio,created_at").eq("profile_visible", true).order("created_at").limit(100);
+  const box = document.getElementById("members");
+  box.innerHTML = "";
+  if(!(data || []).length) box.innerHTML = '<p class="hint">No visible members yet — be the first to say hello on the board.</p>';
+  (data || []).forEach(p => {
+    const d = document.createElement("div");
+    d.className = "post";
+    d.innerHTML = '<div class="who serif" style="color:var(--gold-soft)">' + esc(p.display_name) + "</div>" +
+                  (p.bio ? '<div class="body">' + esc(p.bio) + "</div>" : "");
+    box.appendChild(d);
+  });
+}
+
+/* ---------- init ---------- */
+(async function(){
+  const ok = await dbReady();
+  if(!ok) document.getElementById("dbnotice").classList.remove("hidden");
+  const { data } = await supabase.auth.getSession();
+  if(data.session){
+    user = data.session.user;
+    document.getElementById("authcard").classList.add("hidden");
+    document.getElementById("room").classList.remove("hidden");
+    await enterRoom();
+  }
+})();
+</script>
+</body>
+</html>

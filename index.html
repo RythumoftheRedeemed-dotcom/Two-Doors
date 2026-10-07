@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two Doors — Rhythm of the Redeemed</title>
+<style>
+
+/* Two Doors — Rhythm of the Redeemed. Warm, deep, reverent. Candlelight & furnace, not cafe. */
+:root{
+  --bg:#0c0805;
+  --bg2:#17100a;
+  --panel:rgba(30,21,11,.88);
+  --gold:#d9a94f;
+  --gold-soft:#f0cd7e;
+  --amber:#c07f2c;
+  --ember:#e2581f;
+  --ivory:#f7eeda;
+  --muted:#c8ab7e;
+  --line:rgba(217,169,79,.32);
+  --flame1:#ffdf9e;
+  --flame2:#f5a742;
+  --flame3:#c2571d;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{color-scheme:dark}
+body{
+  background:
+    radial-gradient(120% 42% at 50% -6%, rgba(224,120,32,.20), transparent 62%),
+    radial-gradient(90% 34% at 50% 108%, rgba(150,70,18,.16), transparent 60%),
+    radial-gradient(140% 90% at 50% 40%, #1c130a 0%, var(--bg) 78%);
+  background-color:var(--bg);
+  background-attachment:fixed;
+  color:var(--ivory);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.65;
+  min-height:100vh;
+}
+.serif{font-family:Georgia,"Times New Roman",serif}
+a{color:var(--gold-soft)}
+.wrap{max-width:960px;margin:0 auto;padding:18px 16px 64px}
+
+/* ---------- header: brand + nav, properly spaced ---------- */
+header.site{
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  text-align:center;padding:30px 12px 8px;
+}
+.brand{
+  font-family:Georgia,serif;font-size:1.45rem;letter-spacing:.10em;
+  color:var(--ivory);margin:0;line-height:1.35;
+  text-shadow:0 0 26px rgba(217,169,79,.35);
+}
+.brand small{
+  display:block;font-size:.72rem;letter-spacing:.5em;color:var(--gold);
+  margin-top:8px;text-indent:.5em;
+}
+header.site .mission{
+  font-family:Georgia,serif;font-style:italic;color:var(--gold-soft);
+  font-size:1.05rem;margin:0;max-width:32em;
+}
+nav.doors{
+  display:flex;gap:10px;justify-content:center;align-items:center;
+  flex-wrap:wrap;margin:4px 0 8px;padding:0 4px;
+}
+nav.doors a{
+  text-decoration:none;color:var(--ivory);border:1px solid var(--line);
+  padding:10px 20px;border-radius:999px;background:rgba(217,169,79,.08);
+  font-size:.95rem;white-space:nowrap;
+  box-shadow:inset 0 1px 0 rgba(255,223,158,.12);
+}
+nav.doors a.active{
+  background:linear-gradient(180deg,rgba(217,169,79,.32),rgba(185,122,42,.22));
+  border-color:var(--gold);color:var(--gold-soft);
+}
+
+/* ---------- cards & panels ---------- */
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);border-radius:16px;
+  padding:22px 20px;margin:20px 0;
+  box-shadow:0 10px 34px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,223,158,.10);
+  backdrop-filter:blur(4px);
+}
+.card h2{font-family:Georgia,serif;color:var(--gold-soft);margin:0 0 10px;font-weight:600;font-size:1.45rem;
+  text-shadow:0 0 18px rgba(217,169,79,.25)}
+.card h3{font-family:Georgia,serif;color:var(--gold-soft);margin:18px 0 8px}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-block;background:linear-gradient(180deg,var(--gold-soft),var(--amber));
+  color:#2a1c07;border:none;border-radius:12px;padding:13px 24px;font-size:1rem;
+  font-weight:700;cursor:pointer;text-decoration:none;
+  box-shadow:0 4px 18px rgba(217,169,79,.30), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.5;cursor:wait}
+.btn.ghost{background:rgba(217,169,79,.06);color:var(--gold-soft);border:1px solid var(--line);box-shadow:none}
+
+/* ---------- forms ---------- */
+input[type=text],input[type=email],input[type=password],input[type=url],textarea,select{
+  width:100%;background:#0a0704;border:1px solid var(--line);border-radius:12px;
+  color:var(--ivory);padding:13px 15px;font-size:1rem;margin:6px 0 12px;
+}
+input:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(217,169,79,.18)}
+textarea{min-height:110px;resize:vertical}
+label{color:var(--muted);font-size:.9rem;display:block;margin-top:6px}
+.hint{color:var(--muted);font-size:.9rem}
+::placeholder{color:#7d6647}
+
+/* ---------- chat ---------- */
+.chatlog{
+  display:flex;flex-direction:column;gap:10px;max-height:46vh;overflow-y:auto;
+  padding:8px 4px;margin-bottom:12px;
+}
+.msg{max-width:88%;padding:11px 15px;border-radius:14px;font-size:.97rem;line-height:1.6}
+.msg.guide{background:rgba(240,205,126,.10);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
+.msg.user{background:rgba(194,88,31,.24);border:1px solid rgba(226,88,31,.45);align-self:flex-end;border-bottom-right-radius:4px}
+.msg .who{font-size:.72rem;color:var(--gold);letter-spacing:.12em;margin-bottom:4px}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
+.chip{
+  border:1px solid var(--line);background:linear-gradient(180deg,rgba(217,169,79,.16),rgba(185,122,42,.08));
+  color:var(--gold-soft);border-radius:999px;padding:9px 17px;font-size:.88rem;cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,.3);
+}
+.row{display:flex;gap:10px;align-items:center}
+.row input{margin:0;flex:1}
+.row .btn{flex-shrink:0}
+
+/* ---------- posts / lists / tabs ---------- */
+.post{border-bottom:1px solid rgba(217,169,79,.16);padding:13px 2px}
+.post .meta{font-size:.78rem;color:var(--muted)}
+.post .body{margin:5px 0 2px;white-space:pre-wrap}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.tab{border:1px solid var(--line);background:rgba(217,169,79,.05);color:var(--ivory);
+  border-radius:999px;padding:10px 18px;cursor:pointer;font-size:.93rem}
+.tab.active{background:linear-gradient(180deg,rgba(217,169,79,.30),rgba(185,122,42,.18));
+  border-color:var(--gold);color:var(--gold-soft)}
+.badge{display:inline-block;min-width:20px;text-align:center;background:var(--ember);color:#fff;
+  border-radius:999px;font-size:.72rem;padding:2px 7px;margin-left:6px;font-weight:700}
+.list-item{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:9px 0;
+  background:rgba(217,169,79,.06);cursor:pointer}
+.list-item:hover{background:rgba(217,169,79,.14)}
+.list-item .meta{font-size:.78rem;color:var(--muted)}
+.notice{border:1px dashed var(--line);border-radius:12px;padding:15px;color:var(--muted);
+  font-size:.92rem;margin:14px 0;background:rgba(217,169,79,.04)}
+
+/* ---------- toggles ---------- */
+.toggle{display:flex;gap:10px;margin:8px 0 14px;flex-wrap:wrap}
+.toggle button{flex:1;min-width:140px;border:1px solid var(--line);background:rgba(0,0,0,.25);
+  color:var(--muted);border-radius:12px;padding:12px;cursor:pointer;font-size:.92rem}
+.toggle button.on{background:rgba(217,169,79,.20);color:var(--gold-soft);border-color:var(--gold)}
+.hidden{display:none!important}
+
+/* ---------- flame & door art ---------- */
+.flame{width:68px;height:90px;margin:0 auto;display:block;animation:flick 1.7s ease-in-out infinite;
+  transform-origin:50% 90%;filter:drop-shadow(0 0 22px rgba(245,167,66,.55))}
+@keyframes flick{0%,100%{transform:scale(1) rotate(-1.5deg)}50%{transform:scale(1.06,1.1) rotate(1.5deg)}}
+
+/* ---------- door grid (landing) ---------- */
+.door-grid{display:grid;grid-template-columns:1fr;gap:18px;margin:28px 0}
+@media(min-width:640px){.door-grid{grid-template-columns:1fr 1fr}}
+.door{
+  display:block;text-decoration:none;color:var(--ivory);border:1px solid var(--line);
+  border-radius:18px;padding:32px 24px;background:var(--panel);text-align:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,223,158,.10);
+}
+.door:hover{border-color:var(--gold);background:rgba(217,169,79,.10)}
+.door h2{font-family:Georgia,serif;color:var(--gold-soft);margin:12px 0 8px;font-size:1.6rem;
+  text-shadow:0 0 16px rgba(217,169,79,.25)}
+.door p{color:var(--muted);font-size:.95rem;margin:0}
+
+/* ---------- footer ---------- */
+footer.site{text-align:center;color:var(--muted);font-size:.84rem;padding:28px 16px 44px}
+footer.site a{color:var(--gold)}
+
+/* ---------- user bar ---------- */
+#userbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+#userbar .who{color:var(--gold-soft);font-weight:600}
+#userbar .row{gap:8px}
+
+</style>
+<style>
+  .hero{text-align:center;padding:26px 0 6px}
+  .hero h1{font-family:Georgia,serif;font-size:2.1rem;color:var(--ivory);margin:0 0 8px}
+  .hero .mission{font-family:Georgia,serif;font-style:italic;color:var(--gold-soft);font-size:1.1rem;max-width:34em;margin:0 auto}
+  .verse{text-align:center;color:var(--muted);font-family:Georgia,serif;font-style:italic;margin:22px 0 6px}
+  .doorsvg{width:44px;height:56px;margin:0 auto;display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <p class="brand">RHYTHM OF THE REDEEMED<small>TWO DOORS</small></p>
+  </header>
+
+  <div class="hero">
+    <h1>Two Doors Are Open</h1>
+    <p class="mission">From drowning to dancing — walk it with us, one song at a time.</p>
+  </div>
+
+  <div class="door-grid">
+    <a class="door" href="altar.html">
+      <svg class="doorsvg" viewBox="0 0 44 56" aria-hidden="true">
+        <rect x="8" y="4" width="28" height="48" rx="3" fill="none" stroke="#d9a94f" stroke-width="2"/>
+        <path d="M22 14 C26 22 32 26 32 36 A10 11 0 0 1 12 36 C12 26 18 22 22 14 Z" fill="#f5a742"/>
+      </svg>
+      <h2>The Altar</h2>
+      <p>Come as you are. Ask the guide about the ministry — and lay your prayer request down. The prayer team will carry it with you.</p>
+    </a>
+    <a class="door" href="upper-room.html">
+      <svg class="doorsvg" viewBox="0 0 44 56" aria-hidden="true">
+        <rect x="8" y="4" width="28" height="48" rx="3" fill="none" stroke="#d9a94f" stroke-width="2"/>
+        <circle cx="22" cy="28" r="9" fill="none" stroke="#e8c476" stroke-width="2"/>
+        <circle cx="22" cy="28" r="3.5" fill="#e8c476"/>
+      </svg>
+      <h2>The Upper Room</h2>
+      <p>Join the family. Sign in, meet the members, post on the board, gather in group chats — a holy place for connection and His presence.</p>
+    </a>
+  </div>
+
+  <p class="verse">"Enter into his gates with thanksgiving, and into his courts with praise." — Psalm 100:4</p>
+
+  <div class="card">
+    <h2>What is this place?</h2>
+    <p>Rhythm of the Redeemed is a worship music ministry — original songs telling one journey from drowning to dancing, from ruin to reign, from wound to witness. These two doors are how you step inside: <strong style="color:var(--gold-soft)">The Altar</strong> for prayer, <strong style="color:var(--gold-soft)">The Upper Room</strong> for fellowship. You are welcome here.</p>
+    <p><a href="https://muse.ai/s/channel-intro-page-xzc66gyxexp2y3">← Back to the welcome page</a></p>
+  </div>
+
+  <footer class="site">
+    <p>Rhythm of the Redeemed · prayer requests: <a href="mailto:rhythmoftheredeemed@gmail.com">rhythmoftheredeemed@gmail.com</a></p>
+  </footer>
+</div>
+</body>
+</html>

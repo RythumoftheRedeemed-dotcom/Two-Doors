@@ -334,12 +334,12 @@ const SUPABASE_URL = "https://gegglxiexkwmppnqxvqr.supabase.co";
 const SUPABASE_KEY = "sb_publishable_rWDRMo8sptkcIuTqc97YZQ_vdRMr_NM";
 /* The data connection. Null when offline or the library could not load —
    every feature checks it and says so instead of failing silently. */
-let supabase = null;
+let sb = null;
 try{
   if(window.supabase && window.supabase.createClient){
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   }
-}catch(e){ supabase = null; }
+}catch(e){ sb = null; }
 function noConn(){
   var d = document.getElementById("dbnotice");
   if(d) d.classList.remove("hidden");
@@ -372,9 +372,9 @@ function timeAgo(iso){
 
 /* Returns true if the database tables are reachable. */
 async function dbReady(){
-  if(!supabase) return false;
+  if(!sb) return false;
   try{
-    const { error } = await supabase.from("guide_faq").select("id").limit(1);
+    const { error } = await sb.from("guide_faq").select("id").limit(1);
     return !error;
   }catch(e){ return false; }
 }
@@ -404,20 +404,20 @@ document.getElementById("signup").onclick = async () => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   if(!email || password.length < 6){ authMsg("Enter an email and a password of 6+ characters."); return; }
-  if(!supabase){ authMsg("Couldn't reach the sign-in service — check your connection and try again."); return; }
-  const { error } = await supabase.auth.signUp({ email, password });
+  if(!sb){ authMsg("Couldn't reach the sign-in service — check your connection and try again."); return; }
+  const { error } = await sb.auth.signUp({ email, password });
   authMsg(error ? error.message : "Account created — check your email to confirm, then sign in.");
 };
 document.getElementById("signin").onclick = async () => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
-  if(!supabase){ authMsg("Couldn't reach the sign-in service — check your connection and try again."); return; }
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if(!sb){ authMsg("Couldn't reach the sign-in service — check your connection and try again."); return; }
+  const { error } = await sb.auth.signInWithPassword({ email, password });
   authMsg(error ? error.message : "");
 };
-document.getElementById("signout").onclick = () => { if(supabase) supabase.auth.signOut(); };
+document.getElementById("signout").onclick = () => { if(sb) sb.auth.signOut(); };
 
-if(supabase) supabase.auth.onAuthStateChange(async (ev, session) => {
+if(sb) sb.auth.onAuthStateChange(async (ev, session) => {
   user = session ? session.user : null;
   document.getElementById("authcard").classList.toggle("hidden", !!user);
   document.getElementById("room").classList.toggle("hidden", !user);
@@ -426,8 +426,8 @@ if(supabase) supabase.auth.onAuthStateChange(async (ev, session) => {
 });
 
 async function enterRoom(){
-  if(!supabase){ noConn(); return; }
-  const { data } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
+  if(!sb){ noConn(); return; }
+  const { data } = await sb.from("profiles").select("*").eq("id", user.id).maybeSingle();
   profile = data || null;
   if(!profile){
     document.getElementById("namecard").classList.remove("hidden");
@@ -440,11 +440,11 @@ async function enterRoom(){
 
 document.getElementById("sname").onclick = async () => {
   const name = document.getElementById("dname").value.trim();
-  if(!supabase){ document.getElementById("namemsg").textContent = "Connection unavailable — try again shortly."; return; }
+  if(!sb){ document.getElementById("namemsg").textContent = "Connection unavailable — try again shortly."; return; }
   const bad = cleanName(name);
   const nm = document.getElementById("namemsg");
   if(bad){ nm.textContent = bad; return; }
-  const { error } = await supabase.from("profiles").insert({ id: user.id, display_name: name });
+  const { error } = await sb.from("profiles").insert({ id: user.id, display_name: name });
   if(error){ nm.textContent = error.message; return; }
   nm.textContent = "";
   await enterRoom();
@@ -465,26 +465,26 @@ document.getElementById("myprofile").onclick = () => {
 };
 document.getElementById("psave").onclick = async () => {
   const bio = document.getElementById("pbio").value.trim().slice(0, 500);
-  if(!supabase){ noConn(); return; }
-  const { error } = await supabase.from("profiles").update({ bio, profile_visible: pvis }).eq("id", user.id);
+  if(!sb){ noConn(); return; }
+  const { error } = await sb.from("profiles").update({ bio, profile_visible: pvis }).eq("id", user.id);
   if(!error){ profile.bio = bio; profile.profile_visible = pvis; }
 };
 
 /* ---------- board ---------- */
 function teardownSubs(){
-  if(!supabase){ boardSub = null; groupSub = null; return; }
-  if(boardSub){ supabase.removeChannel(boardSub); boardSub = null; }
-  if(groupSub){ supabase.removeChannel(groupSub); groupSub = null; }
+  if(!sb){ boardSub = null; groupSub = null; return; }
+  if(boardSub){ sb.removeChannel(boardSub); boardSub = null; }
+  if(groupSub){ sb.removeChannel(groupSub); groupSub = null; }
 }
 async function loadBoard(){
-  if(!supabase){ noConn(); return; }
-  const { data } = await supabase.from("board_posts").select("id,body,created_at,user_id").order("created_at", { ascending: false }).limit(50);
+  if(!sb){ noConn(); return; }
+  const { data } = await sb.from("board_posts").select("id,body,created_at,user_id").order("created_at", { ascending: false }).limit(50);
   await fillNames((data || []).map(p => p.user_id));
   const box = document.getElementById("posts");
   box.innerHTML = "";
   (data || []).forEach(p => box.appendChild(postEl(p)));
-  if(boardSub) supabase.removeChannel(boardSub);
-  boardSub = supabase.channel("board")
+  if(boardSub) sb.removeChannel(boardSub);
+  boardSub = sb.channel("board")
     .on("postgres_changes", { event: "INSERT", schema: "public", table: "board_posts" }, async payload => {
       await fillNames([payload.new.user_id]);
       box.prepend(postEl(payload.new));
@@ -499,30 +499,30 @@ function postEl(p){
 }
 document.getElementById("postsend").onclick = async () => {
   const inp = document.getElementById("postin");
-  if(!supabase){ noConn(); return; }
+  if(!sb){ noConn(); return; }
   const body = inp.value.trim();
   if(!body) return;
-  const { error } = await supabase.from("board_posts").insert({ user_id: user.id, body: body.slice(0, 500) });
+  const { error } = await sb.from("board_posts").insert({ user_id: user.id, body: body.slice(0, 500) });
   if(!error) inp.value = "";
 };
 
 /* ---------- names ---------- */
 async function fillNames(ids){
-  if(!supabase){ noConn(); return; }
+  if(!sb){ noConn(); return; }
   const missing = [...new Set(ids)].filter(id => id && !nameMap[id]);
   if(!missing.length) return;
-  const { data } = await supabase.from("profiles").select("id,display_name").in("id", missing);
+  const { data } = await sb.from("profiles").select("id,display_name").in("id", missing);
   (data || []).forEach(p => { nameMap[p.id] = p.display_name; });
 }
 
 /* ---------- groups ---------- */
 async function loadGroups(){
-  if(!supabase){ noConn(); return; }
-  const { data: mem } = await supabase.from("group_members").select("group_id").eq("user_id", user.id);
+  if(!sb){ noConn(); return; }
+  const { data: mem } = await sb.from("group_members").select("group_id").eq("user_id", user.id);
   const ids = (mem || []).map(m => m.group_id);
   let mine = [];
   if(ids.length){
-    const { data } = await supabase.from("group_chats").select("id,name,created_at").in("id", ids).order("created_at");
+    const { data } = await sb.from("group_chats").select("id,name,created_at").in("id", ids).order("created_at");
     mine = data || [];
   }
   const box = document.getElementById("grouplist");
@@ -536,7 +536,7 @@ async function loadGroups(){
     box.appendChild(d);
   });
   /* browse all */
-  const { data: all } = await supabase.from("group_chats").select("id,name").order("created_at").limit(50);
+  const { data: all } = await sb.from("group_chats").select("id,name").order("created_at").limit(50);
   const b = document.getElementById("browse");
   b.innerHTML = "";
   (all || []).filter(g => !ids.includes(g.id)).forEach(g => {
@@ -544,7 +544,7 @@ async function loadGroups(){
     d.className = "list-item";
     d.innerHTML = esc(g.name) + ' <span class="meta">— tap to join</span>';
     d.onclick = async () => {
-      await supabase.from("group_members").insert({ group_id: g.id, user_id: user.id });
+      await sb.from("group_members").insert({ group_id: g.id, user_id: user.id });
       loadGroups();
     };
     b.appendChild(d);
@@ -553,29 +553,29 @@ async function loadGroups(){
 document.getElementById("gcreate").onclick = async () => {
   const name = document.getElementById("gname").value.trim().slice(0, 60);
   if(!name) return;
-  if(!supabase){ noConn(); return; }
-  const { data, error } = await supabase.from("group_chats").insert({ name, created_by: user.id }).select("id,name").single();
+  if(!sb){ noConn(); return; }
+  const { data, error } = await sb.from("group_chats").insert({ name, created_by: user.id }).select("id,name").single();
   if(error) return;
-  await supabase.from("group_members").insert({ group_id: data.id, user_id: user.id });
+  await sb.from("group_members").insert({ group_id: data.id, user_id: user.id });
   document.getElementById("gname").value = "";
   loadGroups();
 };
 
 async function openGroupView(g){
-  if(!supabase){ noConn(); return; }
+  if(!sb){ noConn(); return; }
   openGroup = g;
   unread[g.id] = 0; paintBadges();
   document.getElementById("tab-groups").classList.add("hidden");
   document.getElementById("groupview").classList.remove("hidden");
   document.getElementById("gvname").textContent = g.name;
-  const { data } = await supabase.from("messages").select("id,body,created_at,user_id").eq("group_id", g.id).order("created_at").limit(200);
+  const { data } = await sb.from("messages").select("id,body,created_at,user_id").eq("group_id", g.id).order("created_at").limit(200);
   await fillNames((data || []).map(m => m.user_id));
   const box = document.getElementById("gmsgs");
   box.innerHTML = "";
   (data || []).forEach(m => box.appendChild(msgEl(m)));
   box.scrollTop = box.scrollHeight;
-  if(groupSub) supabase.removeChannel(groupSub);
-  groupSub = supabase.channel("grp-" + g.id)
+  if(groupSub) sb.removeChannel(groupSub);
+  groupSub = sb.channel("grp-" + g.id)
     .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: "group_id=eq." + g.id },
       async payload => {
         if(openGroup && openGroup.id === g.id){
@@ -604,11 +604,11 @@ document.getElementById("gback").onclick = () => {
 document.getElementById("gmsgsend").onclick = sendGroupMsg;
 document.getElementById("gmsgi").addEventListener("keydown", e => { if(e.key === "Enter") sendGroupMsg(); });
 async function sendGroupMsg(){
-  if(!supabase){ noConn(); return; }
+  if(!sb){ noConn(); return; }
   const inp = document.getElementById("gmsgi");
   const body = inp.value.trim();
   if(!body || !openGroup) return;
-  const { error } = await supabase.from("messages").insert({ group_id: openGroup.id, user_id: user.id, body: body.slice(0, 1000) });
+  const { error } = await sb.from("messages").insert({ group_id: openGroup.id, user_id: user.id, body: body.slice(0, 1000) });
   if(!error) inp.value = "";
 }
 function paintBadges(){
@@ -621,15 +621,15 @@ function paintBadges(){
   document.getElementById("totalbadge").innerHTML = total ? '<span class="badge">' + total + " new</span>" : "";
 }
 async function loadGroupMembers(gid){
-  if(!supabase){ noConn(); return; }
-  const { data } = await supabase.from("group_members").select("user_id").eq("group_id", gid);
+  if(!sb){ noConn(); return; }
+  const { data } = await sb.from("group_members").select("user_id").eq("group_id", gid);
   await fillNames((data || []).map(m => m.user_id));
   const box = document.getElementById("gmems");
   box.innerHTML = (data || []).map(m => '<span class="chip">' + esc(nameMap[m.user_id] || "Member") + "</span>").join(" ");
 }
 async function loadCallLinks(gid){
-  if(!supabase){ noConn(); return; }
-  const { data } = await supabase.from("call_links").select("id,url,created_at").eq("group_id", gid).eq("active", true).order("created_at", { ascending: false });
+  if(!sb){ noConn(); return; }
+  const { data } = await sb.from("call_links").select("id,url,created_at").eq("group_id", gid).eq("active", true).order("created_at", { ascending: false });
   const box = document.getElementById("calllinks");
   box.innerHTML = "";
   if(!(data || []).length) box.innerHTML = '<p class="hint">No call links yet.</p>';
@@ -643,15 +643,15 @@ async function loadCallLinks(gid){
 document.getElementById("cadd").onclick = async () => {
   const url = document.getElementById("curl").value.trim();
   if(!url || !openGroup) return;
-  if(!supabase){ noConn(); return; }
-  const { error } = await supabase.from("call_links").insert({ group_id: openGroup.id, url, created_by: user.id });
+  if(!sb){ noConn(); return; }
+  const { error } = await sb.from("call_links").insert({ group_id: openGroup.id, url, created_by: user.id });
   if(!error){ document.getElementById("curl").value = ""; loadCallLinks(openGroup.id); }
 };
 
 /* ---------- members ---------- */
 async function loadMembers(){
-  if(!supabase){ noConn(); return; }
-  const { data } = await supabase.from("profiles").select("display_name,bio,created_at").eq("profile_visible", true).order("created_at").limit(100);
+  if(!sb){ noConn(); return; }
+  const { data } = await sb.from("profiles").select("display_name,bio,created_at").eq("profile_visible", true).order("created_at").limit(100);
   const box = document.getElementById("members");
   box.innerHTML = "";
   if(!(data || []).length) box.innerHTML = '<p class="hint">No visible members yet — be the first to say hello on the board.</p>';
@@ -667,8 +667,8 @@ async function loadMembers(){
 /* ---------- init ---------- */
 (async function(){
   if(!(await dbReady())) noConn();
-  if(!supabase) return;
-  const { data } = await supabase.auth.getSession();
+  if(!sb) return;
+  const { data } = await sb.auth.getSession();
   if(data.session){
     user = data.session.user;
     document.getElementById("authcard").classList.add("hidden");

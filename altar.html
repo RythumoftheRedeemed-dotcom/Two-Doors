@@ -252,12 +252,12 @@ const SUPABASE_URL = "https://gegglxiexkwmppnqxvqr.supabase.co";
 const SUPABASE_KEY = "sb_publishable_rWDRMo8sptkcIuTqc97YZQ_vdRMr_NM";
 /* The data connection. Null when offline or the library could not load —
    every feature checks it and says so instead of failing silently. */
-let supabase = null;
+let sb = null;
 try{
   if(window.supabase && window.supabase.createClient){
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   }
-}catch(e){ supabase = null; }
+}catch(e){ sb = null; }
 function noConn(){
   var d = document.getElementById("dbnotice");
   if(d) d.classList.remove("hidden");
@@ -290,9 +290,9 @@ function timeAgo(iso){
 
 /* Returns true if the database tables are reachable. */
 async function dbReady(){
-  if(!supabase) return false;
+  if(!sb) return false;
   try{
-    const { error } = await supabase.from("guide_faq").select("id").limit(1);
+    const { error } = await sb.from("guide_faq").select("id").limit(1);
     return !error;
   }catch(e){ return false; }
 }
@@ -393,9 +393,9 @@ document.querySelectorAll("#vistoggle button").forEach(b => {
 /* init */
 (async function(){
   addMsg("guide", "Welcome to the Altar. I am here to tell you about the ministry and to receive your prayer. What would you like to know?");
-  if(supabase){
+  if(sb){
     try{
-      const { data, error } = await supabase.from("guide_faq").select("question,answer,keywords");
+      const { data, error } = await sb.from("guide_faq").select("question,answer,keywords");
       if(!error && data && data.length){
         FAQ = data.map(r => ({ q: r.question, a: r.answer, k: r.keywords || "" }));
       }
@@ -411,9 +411,9 @@ document.getElementById("prayerform").addEventListener("submit", async e => {
   if(!body) return;
   const btn = document.getElementById("psend");
   btn.disabled = true;
-  if(!supabase){ noConn(); btn.disabled = false; return; }
+  if(!sb){ noConn(); btn.disabled = false; return; }
   try{
-    const { error } = await supabase.from("prayer_requests").insert({ body, visibility });
+    const { error } = await sb.from("prayer_requests").insert({ body, visibility });
     if(error) throw error;
     document.getElementById("pbody").value = "";
     document.getElementById("pok").style.display = "block";

@@ -336,7 +336,7 @@ const qin = document.getElementById("qin");
 function addMsg(who, text){
   const d = document.createElement("div");
   d.className = "msg " + who;
-  d.innerHTML = '<div class="who">' + (who === "guide" ? "GUIDE" : "YOU") + "</div>" + esc(text);
+  d.innerHTML = '<div class="who">' + (who === "guide" ? "Rhythm of the Redeemed" : "YOU") + "</div>" + esc(text);
   chatlog.appendChild(d);
   chatlog.scrollTop = chatlog.scrollHeight;
 }

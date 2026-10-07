@@ -311,6 +311,9 @@ footer.site a{color:var(--gold)}
 
     <div class="card hidden" id="profilecard">
       <h2>My Profile</h2>
+      <label for="pname">Display name</label>
+      <input type="text" id="pname" maxlength="40" placeholder="Your display name">
+      <p class="hint" id="pmsg" style="display:none"></p>
       <label for="pbio">About you</label>
       <textarea id="pbio" maxlength="500" placeholder="A few words…"></textarea>
       <label>Let others view my profile</label>
@@ -463,13 +466,23 @@ document.querySelectorAll("#visptoggle button").forEach(b => {
 document.getElementById("myprofile").onclick = () => {
   const c = document.getElementById("profilecard");
   c.classList.toggle("hidden");
-  if(profile){ document.getElementById("pbio").value = profile.bio || ""; }
+  if(profile){
+    document.getElementById("pbio").value = profile.bio || "";
+    document.getElementById("pname").value = profile.display_name || "";
+  }
 };
 document.getElementById("psave").onclick = async () => {
   const bio = document.getElementById("pbio").value.trim().slice(0, 500);
+  const name = document.getElementById("pname").value.trim().slice(0, 40);
   if(!sb){ noConn(); return; }
-  const { error } = await sb.from("profiles").update({ bio, profile_visible: pvis }).eq("id", user.id);
-  if(!error){ profile.bio = bio; profile.profile_visible = pvis; }
+  const pmsg = document.getElementById("pmsg");
+  const showP = t => { pmsg.style.display = t ? "block" : "none"; pmsg.textContent = t || ""; };
+  if(!name){ showP("Display name can't be empty."); return; }
+  const { error } = await sb.from("profiles").update({ display_name: name, bio, profile_visible: pvis }).eq("id", user.id);
+  if(error){ showP("Could not save: " + error.message); return; }
+  showP("");
+  profile.display_name = name; profile.bio = bio; profile.profile_visible = pvis;
+  document.getElementById("who").textContent = name;
 };
 
 /* ---------- board ---------- */

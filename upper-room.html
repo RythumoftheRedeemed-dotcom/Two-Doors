@@ -280,6 +280,7 @@ footer.site a{color:var(--gold)}
         <input type="text" id="gname" maxlength="60" placeholder="Group name, e.g. Morning Prayer">
         <button class="btn" id="gcreate">Create</button>
       </div>
+      <p class="hint" id="gmsg" style="display:none"></p>
       <h3>Browse groups</h3>
       <div id="browse"></div>
     </div>
@@ -405,7 +406,8 @@ document.getElementById("signup").onclick = async () => {
   const password = document.getElementById("password").value;
   if(!email || password.length < 6){ authMsg("Enter an email and a password of 6+ characters."); return; }
   if(!sb){ authMsg("Couldn't reach the sign-in service — check your connection and try again."); return; }
-  const { error } = await sb.auth.signUp({ email, password });
+  const { error } = await sb.auth.signUp({ email, password,
+    options: { emailRedirectTo: "https://rythumoftheredeemed-dotcom.github.io/Two-Doors/upper-room.html" } });
   authMsg(error ? error.message : "Account created — check your email to confirm, then sign in.");
 };
 document.getElementById("signin").onclick = async () => {
@@ -554,9 +556,15 @@ document.getElementById("gcreate").onclick = async () => {
   const name = document.getElementById("gname").value.trim().slice(0, 60);
   if(!name) return;
   if(!sb){ noConn(); return; }
-  const { data, error } = await sb.from("group_chats").insert({ name, created_by: user.id }).select("id,name").single();
-  if(error) return;
-  await sb.from("group_members").insert({ group_id: data.id, user_id: user.id });
+  const msg = document.getElementById("gmsg");
+  const showMsg = t => { if(msg){ msg.style.display = t ? "block" : "none"; msg.textContent = t || ""; } };
+  showMsg("");
+  /* generate the id client-side so no RETURNING select is needed */
+  const gid = (crypto.randomUUID ? crypto.randomUUID() : "g-" + Date.now() + "-" + Math.floor(Math.random() * 1e9));
+  const { error } = await sb.from("group_chats").insert({ id: gid, name, created_by: user.id });
+  if(error){ showMsg("Could not create the group: " + error.message); return; }
+  const { error: mErr } = await sb.from("group_members").insert({ group_id: gid, user_id: user.id });
+  if(mErr){ showMsg("Group created, but joining it failed: " + mErr.message); return; }
   document.getElementById("gname").value = "";
   loadGroups();
 };

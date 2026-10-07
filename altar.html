@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>window.__errs=[];window.onerror=function(m){try{window.__errs.push(String(m));var d=document.getElementById('errlog');if(d){d.style.display='block';d.textContent+='\u2022 '+String(m).slice(0,160)+'\n';}}catch(e){}};</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Altar — Rhythm of the Redeemed</title>
@@ -188,6 +189,7 @@ footer.site a{color:var(--gold)}
 </style>
 </head>
 <body>
+<div id="errlog" style="display:none;margin:10px;padding:10px;border-radius:8px;background:#3a1111;color:#ffd9d9;font-size:12px;white-space:pre-wrap;"></div>
 <div class="wrap">
   <header class="site">
     <p class="brand">RHYTHM OF THE REDEEMED<small>TWO DOORS</small></p>
@@ -243,11 +245,24 @@ footer.site a{color:var(--gold)}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>if(!window.supabase||!window.supabase.createClient){document.write('<script src="https:\/\/unpkg.com\/@supabase\/supabase-js@2\/dist\/umd\/supabase.js"><\/script>');}</script>
 <script>
 /* Two Doors — shared Supabase client + helpers */
 const SUPABASE_URL = "https://gegglxiexkwmppnqxvqr.supabase.co";
 const SUPABASE_KEY = "sb_publishable_rWDRMo8sptkcIuTqc97YZQ_vdRMr_NM";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+/* The data connection. Null when offline or the library could not load —
+   every feature checks it and says so instead of failing silently. */
+let supabase = null;
+try{
+  if(window.supabase && window.supabase.createClient){
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  }
+}catch(e){ supabase = null; }
+function noConn(){
+  var d = document.getElementById("dbnotice");
+  if(d) d.classList.remove("hidden");
+  return false;
+}
 
 function esc(s){
   return String(s == null ? "" : s)
@@ -275,6 +290,7 @@ function timeAgo(iso){
 
 /* Returns true if the database tables are reachable. */
 async function dbReady(){
+  if(!supabase) return false;
   try{
     const { error } = await supabase.from("guide_faq").select("id").limit(1);
     return !error;
@@ -377,14 +393,15 @@ document.querySelectorAll("#vistoggle button").forEach(b => {
 /* init */
 (async function(){
   addMsg("guide", "Welcome to the Altar. I am here to tell you about the ministry and to receive your prayer. What would you like to know?");
-  try{
-    const { data, error } = await supabase.from("guide_faq").select("question,answer,keywords");
-    if(!error && data && data.length){
-      FAQ = data.map(r => ({ q: r.question, a: r.answer, k: r.keywords || "" }));
-    }
-  }catch(e){ /* fallback FAQ already in place */ }
-  const ok = await dbReady();
-  if(!ok) document.getElementById("dbnotice").classList.remove("hidden");
+  if(supabase){
+    try{
+      const { data, error } = await supabase.from("guide_faq").select("question,answer,keywords");
+      if(!error && data && data.length){
+        FAQ = data.map(r => ({ q: r.question, a: r.answer, k: r.keywords || "" }));
+      }
+    }catch(e){ /* fallback FAQ already in place */ }
+  }
+  if(!(await dbReady())) noConn();
 })();
 
 /* prayer request submit */
@@ -394,6 +411,7 @@ document.getElementById("prayerform").addEventListener("submit", async e => {
   if(!body) return;
   const btn = document.getElementById("psend");
   btn.disabled = true;
+  if(!supabase){ noConn(); btn.disabled = false; return; }
   try{
     const { error } = await supabase.from("prayer_requests").insert({ body, visibility });
     if(error) throw error;

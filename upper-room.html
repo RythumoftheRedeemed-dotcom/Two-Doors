@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>window.__errs=[];window.onerror=function(m){try{window.__errs.push(String(m));var d=document.getElementById('errlog');if(d){d.style.display='block';d.textContent+='\u2022 '+String(m).slice(0,160)+'\n';}}catch(e){}};</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Upper Room — Rhythm of the Redeemed</title>
@@ -192,6 +193,7 @@ footer.site a{color:var(--gold)}
 </style>
 </head>
 <body>
+<div id="errlog" style="display:none;margin:10px;padding:10px;border-radius:8px;background:#3a1111;color:#ffd9d9;font-size:12px;white-space:pre-wrap;"></div>
 <div class="wrap">
   <header class="site">
     <p class="brand">RHYTHM OF THE REDEEMED<small>TWO DOORS</small></p>
@@ -325,11 +327,24 @@ footer.site a{color:var(--gold)}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>if(!window.supabase||!window.supabase.createClient){document.write('<script src="https:\/\/unpkg.com\/@supabase\/supabase-js@2\/dist\/umd\/supabase.js"><\/script>');}</script>
 <script>
 /* Two Doors — shared Supabase client + helpers */
 const SUPABASE_URL = "https://gegglxiexkwmppnqxvqr.supabase.co";
 const SUPABASE_KEY = "sb_publishable_rWDRMo8sptkcIuTqc97YZQ_vdRMr_NM";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+/* The data connection. Null when offline or the library could not load —
+   every feature checks it and says so instead of failing silently. */
+let supabase = null;
+try{
+  if(window.supabase && window.supabase.createClient){
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  }
+}catch(e){ supabase = null; }
+function noConn(){
+  var d = document.getElementById("dbnotice");
+  if(d) d.classList.remove("hidden");
+  return false;
+}
 
 function esc(s){
   return String(s == null ? "" : s)
@@ -357,6 +372,7 @@ function timeAgo(iso){
 
 /* Returns true if the database tables are reachable. */
 async function dbReady(){
+  if(!supabase) return false;
   try{
     const { error } = await supabase.from("guide_faq").select("id").limit(1);
     return !error;
@@ -388,18 +404,20 @@ document.getElementById("signup").onclick = async () => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   if(!email || password.length < 6){ authMsg("Enter an email and a password of 6+ characters."); return; }
+  if(!supabase){ authMsg("Couldn't reach the sign-in service — check your connection and try again."); return; }
   const { error } = await supabase.auth.signUp({ email, password });
   authMsg(error ? error.message : "Account created — check your email to confirm, then sign in.");
 };
 document.getElementById("signin").onclick = async () => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
+  if(!supabase){ authMsg("Couldn't reach the sign-in service — check your connection and try again."); return; }
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   authMsg(error ? error.message : "");
 };
-document.getElementById("signout").onclick = () => supabase.auth.signOut();
+document.getElementById("signout").onclick = () => { if(supabase) supabase.auth.signOut(); };
 
-supabase.auth.onAuthStateChange(async (ev, session) => {
+if(supabase) supabase.auth.onAuthStateChange(async (ev, session) => {
   user = session ? session.user : null;
   document.getElementById("authcard").classList.toggle("hidden", !!user);
   document.getElementById("room").classList.toggle("hidden", !user);
@@ -408,6 +426,7 @@ supabase.auth.onAuthStateChange(async (ev, session) => {
 });
 
 async function enterRoom(){
+  if(!supabase){ noConn(); return; }
   const { data } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
   profile = data || null;
   if(!profile){
@@ -421,6 +440,7 @@ async function enterRoom(){
 
 document.getElementById("sname").onclick = async () => {
   const name = document.getElementById("dname").value.trim();
+  if(!supabase){ document.getElementById("namemsg").textContent = "Connection unavailable — try again shortly."; return; }
   const bad = cleanName(name);
   const nm = document.getElementById("namemsg");
   if(bad){ nm.textContent = bad; return; }
@@ -445,16 +465,19 @@ document.getElementById("myprofile").onclick = () => {
 };
 document.getElementById("psave").onclick = async () => {
   const bio = document.getElementById("pbio").value.trim().slice(0, 500);
+  if(!supabase){ noConn(); return; }
   const { error } = await supabase.from("profiles").update({ bio, profile_visible: pvis }).eq("id", user.id);
   if(!error){ profile.bio = bio; profile.profile_visible = pvis; }
 };
 
 /* ---------- board ---------- */
 function teardownSubs(){
+  if(!supabase){ boardSub = null; groupSub = null; return; }
   if(boardSub){ supabase.removeChannel(boardSub); boardSub = null; }
   if(groupSub){ supabase.removeChannel(groupSub); groupSub = null; }
 }
 async function loadBoard(){
+  if(!supabase){ noConn(); return; }
   const { data } = await supabase.from("board_posts").select("id,body,created_at,user_id").order("created_at", { ascending: false }).limit(50);
   await fillNames((data || []).map(p => p.user_id));
   const box = document.getElementById("posts");
@@ -476,6 +499,7 @@ function postEl(p){
 }
 document.getElementById("postsend").onclick = async () => {
   const inp = document.getElementById("postin");
+  if(!supabase){ noConn(); return; }
   const body = inp.value.trim();
   if(!body) return;
   const { error } = await supabase.from("board_posts").insert({ user_id: user.id, body: body.slice(0, 500) });
@@ -484,6 +508,7 @@ document.getElementById("postsend").onclick = async () => {
 
 /* ---------- names ---------- */
 async function fillNames(ids){
+  if(!supabase){ noConn(); return; }
   const missing = [...new Set(ids)].filter(id => id && !nameMap[id]);
   if(!missing.length) return;
   const { data } = await supabase.from("profiles").select("id,display_name").in("id", missing);
@@ -492,6 +517,7 @@ async function fillNames(ids){
 
 /* ---------- groups ---------- */
 async function loadGroups(){
+  if(!supabase){ noConn(); return; }
   const { data: mem } = await supabase.from("group_members").select("group_id").eq("user_id", user.id);
   const ids = (mem || []).map(m => m.group_id);
   let mine = [];
@@ -527,6 +553,7 @@ async function loadGroups(){
 document.getElementById("gcreate").onclick = async () => {
   const name = document.getElementById("gname").value.trim().slice(0, 60);
   if(!name) return;
+  if(!supabase){ noConn(); return; }
   const { data, error } = await supabase.from("group_chats").insert({ name, created_by: user.id }).select("id,name").single();
   if(error) return;
   await supabase.from("group_members").insert({ group_id: data.id, user_id: user.id });
@@ -535,6 +562,7 @@ document.getElementById("gcreate").onclick = async () => {
 };
 
 async function openGroupView(g){
+  if(!supabase){ noConn(); return; }
   openGroup = g;
   unread[g.id] = 0; paintBadges();
   document.getElementById("tab-groups").classList.add("hidden");
@@ -576,6 +604,7 @@ document.getElementById("gback").onclick = () => {
 document.getElementById("gmsgsend").onclick = sendGroupMsg;
 document.getElementById("gmsgi").addEventListener("keydown", e => { if(e.key === "Enter") sendGroupMsg(); });
 async function sendGroupMsg(){
+  if(!supabase){ noConn(); return; }
   const inp = document.getElementById("gmsgi");
   const body = inp.value.trim();
   if(!body || !openGroup) return;
@@ -592,12 +621,14 @@ function paintBadges(){
   document.getElementById("totalbadge").innerHTML = total ? '<span class="badge">' + total + " new</span>" : "";
 }
 async function loadGroupMembers(gid){
+  if(!supabase){ noConn(); return; }
   const { data } = await supabase.from("group_members").select("user_id").eq("group_id", gid);
   await fillNames((data || []).map(m => m.user_id));
   const box = document.getElementById("gmems");
   box.innerHTML = (data || []).map(m => '<span class="chip">' + esc(nameMap[m.user_id] || "Member") + "</span>").join(" ");
 }
 async function loadCallLinks(gid){
+  if(!supabase){ noConn(); return; }
   const { data } = await supabase.from("call_links").select("id,url,created_at").eq("group_id", gid).eq("active", true).order("created_at", { ascending: false });
   const box = document.getElementById("calllinks");
   box.innerHTML = "";
@@ -612,12 +643,14 @@ async function loadCallLinks(gid){
 document.getElementById("cadd").onclick = async () => {
   const url = document.getElementById("curl").value.trim();
   if(!url || !openGroup) return;
+  if(!supabase){ noConn(); return; }
   const { error } = await supabase.from("call_links").insert({ group_id: openGroup.id, url, created_by: user.id });
   if(!error){ document.getElementById("curl").value = ""; loadCallLinks(openGroup.id); }
 };
 
 /* ---------- members ---------- */
 async function loadMembers(){
+  if(!supabase){ noConn(); return; }
   const { data } = await supabase.from("profiles").select("display_name,bio,created_at").eq("profile_visible", true).order("created_at").limit(100);
   const box = document.getElementById("members");
   box.innerHTML = "";
@@ -633,8 +666,8 @@ async function loadMembers(){
 
 /* ---------- init ---------- */
 (async function(){
-  const ok = await dbReady();
-  if(!ok) document.getElementById("dbnotice").classList.remove("hidden");
+  if(!(await dbReady())) noConn();
+  if(!supabase) return;
   const { data } = await supabase.auth.getSession();
   if(data.session){
     user = data.session.user;

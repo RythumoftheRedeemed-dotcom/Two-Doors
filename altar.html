@@ -5,6 +5,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Altar — Rhythm of the Redeemed</title>
+<meta name="description" content="The Altar — bring your prayer request to Rhythm of the Redeemed. A volunteer prayer team will stand with you in prayer. From drowning to dancing — walk it with us, one song at a time.">
+<meta name="keywords" content="Rhythm of the Redeemed, rhythm of the redeemed ministry, rhythm of the redeemed worship, rhythm of the redeemed songs, ministry, Christian music, Christian gospel, gospel, gospel music, gospel rap, Christian rap, Christian country, Christian pop, Christian rock, worship music, devotional, devotional music, Christian connection, what is a Christian, how to grow as a Christian, how does a Christian grow, growing in faith, Christian faith journey, songs about faith, music about God, worship songs, from drowning to dancing, from wound to witness, from ruin to reign, walk it with us one song at a time, from drowning to dancing worship, The Borrowed Breath, Out of the Depths, The Surrender, The Secret Place, The Refiner&#x27;s Fire, The Rising, The Throne, The Stand, A Faith Thats Alive, A Moment Of Grace, A Sigh From The Soul, Bleeding Gold, Break The Clay, Breakthrough Ground, Breath And Fire, Complete In Him, Crimson Stained Rock, Deep In Grace, Draw Near, Edens Gate, Flame In The Twilight, Forever In The Dawn, Foundation Of The Free, Foundations In The Deep, From Victory, Gatekeeper Of Peace, Grace Keeps The Pace, Heavens Sound, Holy Habitation, In The Potters Hands, Kingdom Inside Is Alive, Legacy Of Light, Love Out Loud, Love Unbound, Made On Purpose, More Than Your Hearts Desire, My World For Your Heart, One New Life, Open To The King, Right Here In The Clay, Rising From Yesterday, River Untamed, Sacred Moment, Screaming In The Silence, Stewardship Of The Soul, Tears Of Faith, Tears Of Faith To Fire, Temple Of The Living Fire, The Clays Surrender, The Echo Of The Throne, The Heavy Inhale, The Inner Chamber, The Light After The Rain, The Living Bridge, The Mirror Is A Door To The Throne, The Prayer Through Glass, The Ravens Prayer, The Ruins Become The Throne, The Scribble, The Shepherds Call, The Sword And The Spark, The Unbroken Path, Unbreakable Pact, Were Family, Where I End You Begin, Where The Flow Falls, Who Told You That, grace, redemption, redeemed, surrender, faith, hope, healing, prayer, worship, repentance, forgiveness, mercy, salvation, prodigal son, second chances, new life in Christ, born again, walking with God, hearing Gods voice, trust in God, peace in Christ, joy in suffering, grief and faith, overcoming addiction, freedom in Christ, identity in Christ, child of God, sonship, the Fathers love, God as Father, intimacy with God, secret place prayer, refiners fire, trials and faith, perseverance, spiritual growth, discipleship, Bible study, scripture songs, songs from scripture, psalms, KJV scripture, testimony, witness, ministry through music, songs for the broken, hope for the hurting, grief songs Christian, songs about loss, songs about grace, songs about surrender, The Altar prayer request, The Upper Room fellowship, submit a prayer request online, Christian prayer team, online Christian fellowship, ask a pastor a question">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Altar — Rhythm of the Redeemed">
+<meta property="og:description" content="The Altar — bring your prayer request to Rhythm of the Redeemed. A volunteer prayer team will stand with you in prayer. From drowning to dancing — walk it with us, one song at a time.">
+<meta property="og:url" content="https://rythumoftheredeemed-dotcom.github.io/Two-Doors/altar.html">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "The Altar — Rhythm of the Redeemed",
+  "url": "https://rythumoftheredeemed-dotcom.github.io/Two-Doors/altar.html",
+  "description": "The Altar — bring your prayer request to Rhythm of the Redeemed. A volunteer prayer team will stand with you in prayer. From drowning to dancing — walk it with us, one song at a time.",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Rhythm of the Redeemed",
+    "url": "https://rythumoftheredeemed-dotcom.github.io/Two-Doors/"
+  }
+}
+</script>
 <style>
 
 /* Two Doors — Rhythm of the Redeemed. Warm, deep, reverent. Candlelight & furnace, not cafe. */
@@ -212,8 +232,8 @@ footer.site a{color:var(--gold)}
   </div>
 
   <div class="card">
-    <h2>Ask the Guide</h2>
-    <p class="hint">A welcoming guide is here to tell you about the ministry — the mission, the songs, the nine chapters, prayer, and the Upper Room. Ask anything, or tap a question below.</p>
+    <h2>We're Here to Help</h2>
+    <p class="hint">We're real people on the Rhythm of the Redeemed team, and we're here for you. Ask us about the ministry — the mission, the songs, the nine chapters, prayer, and the Upper Room. Ask anything, or tap a question below.</p>
     <div class="chatlog" id="chatlog" aria-live="polite"></div>
     <div class="chips" id="chips"></div>
     <div class="row">
@@ -392,7 +412,7 @@ document.querySelectorAll("#vistoggle button").forEach(b => {
 
 /* init */
 (async function(){
-  addMsg("guide", "Welcome to the Altar. I am here to tell you about the ministry and to receive your prayer. What would you like to know?");
+  addMsg("guide", "Welcome to the Altar. We're the Rhythm of the Redeemed team — here to tell you about the ministry and to receive your prayer. What would you like to know?");
   if(sb){
     try{
       const { data, error } = await sb.from("guide_faq").select("question,answer,keywords");
